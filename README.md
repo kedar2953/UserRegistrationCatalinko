@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 ## Introduction
 Each buyer will have a cart. Users should be able to add, remove(modify) and move items to the watchlist from cart. When a user requests for cart details, it will show all items and total cost of cart. For items in cart, users can increase or decrease quantity.
 
@@ -23,3 +24,11 @@ This will add a new item in the cart with count. PUT /cart/{cartId} This functio
 { “products”: [ { “Seller_id”: <seller_id>, “product_id”: “23fdst4tfdgr6yrtfdbvr576ytre”, “Count”: <>, “price”:<>, } ]
 
 This will remove products from the cart or if an item already exists, increase the count by provided item count.
+=======
+# CartServiceLambda
+
+This service deals with all cart related activities. These include:
+1. Add to cart
+2. Remove cart
+3. Update cart
+>>>>>>> Stashed changes

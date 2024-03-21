@@ -33,6 +33,9 @@ public class CartPojo {
     private String cartId;
 
     @DynamoDBAttribute
+    private String userId;
+
+    @DynamoDBAttribute
     private String[] items;
 
     @DynamoDBAttribute

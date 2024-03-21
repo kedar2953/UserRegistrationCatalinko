@@ -5,9 +5,11 @@ import CartServiceLambda.constants.AddToCartResponse;
 import CartServiceLambda.builder.CartDDBBuilder;
 
 public class AddToCartComponent {
-    CartDDBBuilder cartDDBBuilder;
+    CartDDBBuilder cartDDBBuilder = new CartDDBBuilder();
 
     public AddToCartResponse addToCart(AddToCartRequest addToCartRequest) {
+        System.out.println("Component:");
+
         AddToCartResponse addToCartResponse = cartDDBBuilder.addToCart(addToCartRequest);
         return addToCartResponse;
     }

@@ -21,6 +21,7 @@ public class CartDDBAccessor {
 
     public AddToCartResponse addToCart(AddToCartRequest addToCartRequest) throws ConditionalCheckFailedException {
         this.initDynamoDbClient();
+        System.out.println("Accessor: " + addToCartRequest.getUserId() + " " + addToCartRequest.getItems());
 
         Map<String, AttributeValue> attributesMap = new HashMap<>();
 
@@ -31,7 +32,7 @@ public class CartDDBAccessor {
         // compute cart value
         String cartValue = "134233";
         attributesMap.put("cartValue", new AttributeValue(cartValue));
-
+        System.out.println("Accessor: " + attributesMap);
         amazonDynamoDB.putItem(DYNAMODB_TABLE_NAME, attributesMap);
 
         AddToCartResponse addToCartResponse = new AddToCartResponse();
@@ -40,8 +41,14 @@ public class CartDDBAccessor {
     }
 
     private void initDynamoDbClient() {
-        this.amazonDynamoDB = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(REGION)
-                .build();
+        System.out.println("Accessor:");
+
+        try {
+            this.amazonDynamoDB = AmazonDynamoDBClientBuilder.standard()
+                    .withRegion(REGION)
+                    .build();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

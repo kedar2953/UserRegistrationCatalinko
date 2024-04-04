@@ -1,4 +1,4 @@
-package CartServiceLambda.constants;
+package LoginServiceLambda.constants;
 import java.util.Map;
 
 public class AppSyncRequest {

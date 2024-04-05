@@ -31,24 +31,35 @@ public class RegisterActivity implements RequestHandler<Map<String, Object>, Reg
         // Extract user details from inputMap
         String name = (String) inputMap.get("name");
         String emailId = (String) inputMap.get("emailId");
-        String organisation = (String) inputMap.get("organisation");
-        String password = (String) inputMap.get("password");
-        String state = (String) inputMap.get("state");
         String phoneNumber = (String) inputMap.get("phoneNumber");
-        String referralCode = (String) inputMap.get("referralCode"); // Optional
+        String userType = (String) inputMap.get("userType");
+        String businessName = (String) inputMap.get("businessName");
+        String address = (String) inputMap.get("address");
+        boolean kycStatus = (boolean) inputMap.get("kycStatus");
+        boolean status = (boolean) inputMap.get("status");
+        String GSTIN = (String) inputMap.get("GSTIN");
+        Map<String, String> onboardingDocsForBuyer = (Map<String, String>) inputMap.get("onboardingDocsForBuyer");
+        Map<String, String> onboardingDocsForSeller = (Map<String, String>) inputMap.get("onboardingDocsForSeller");
+        // boolean status = false; // Set the status as default
 
         // Print extracted user details individually
         System.out.println("Name: " + name);
         System.out.println("Email: " + emailId);
-        System.out.println("Organisation: " + organisation);
-        System.out.println("Password: " + password);
-        System.out.println("State: " + state);
         System.out.println("Phone Number: " + phoneNumber);
-        System.out.println("Referral Code: " + referralCode);
+        System.out.println("User Type: " + userType);
+        System.out.println("Business Name: " + businessName);
+        System.out.println("Address: " + address);
+        System.out.println("KYC Status: " + kycStatus);
+        System.out.println("GSTIN: " + GSTIN);
+        System.out.println("Onboarding Docs For Buyer: " + onboardingDocsForBuyer);
+        System.out.println("Onboarding Docs For Seller: " + onboardingDocsForSeller);
+        System.out.println("Status: " + status);
         
+        // Create RegisterUserRequest object
         RegisterUserRequest registerUserRequest = new RegisterUserRequest(
-                name, emailId, organisation, password, state,phoneNumber, referralCode);
+                null, null, userType, status, name, businessName, phoneNumber, emailId, address, kycStatus, GSTIN, onboardingDocsForBuyer, onboardingDocsForSeller);
 
+        // Register user using RegisterComponent
         RegisterUserResponse registerUserResponse = registerComponent.register(registerUserRequest);
 
         return registerUserResponse;

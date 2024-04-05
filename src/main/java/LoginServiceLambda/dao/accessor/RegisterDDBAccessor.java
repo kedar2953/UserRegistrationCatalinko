@@ -12,56 +12,63 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.mindrot.jbcrypt.BCrypt; 
 
 public class RegisterDDBAccessor {
 
     private AmazonDynamoDB amazonDynamoDB;
-    private String DYNAMODB_TABLE_NAME = "UserCredentials"; 
+    private String DYNAMODB_TABLE_NAME = "UserCredentials";
     private String REGION = "ap-south-1";
 
-    private void initDynamoDbClient() {
-        System.out.println("Accessor:");
-
-        try {
-            this.amazonDynamoDB = AmazonDynamoDBClientBuilder.standard()
-                    .withRegion(REGION)
-                    .build();
-        } catch (Exception e) {
-            System.out.println("Error in initdb client"+ e.getMessage());
-        }
+    public RegisterDDBAccessor() {
+        this.amazonDynamoDB = AmazonDynamoDBClientBuilder.standard().withRegion(REGION).build();
     }
 
     public RegisterUserResponse registerUser(RegisterUserRequest registerUserRequest) {
-        this.initDynamoDbClient();
-        System.out.println(registerUserRequest);    
-        String userId = UUID.randomUUID().toString(); 
-        String name = registerUserRequest.getName();
-        String emailId = registerUserRequest.getEmailId();
-        String organisation = registerUserRequest.getOrganisation();
-        String password = registerUserRequest.getPassword(); 
-        String state = registerUserRequest.getState();
-        String phoneNumber = registerUserRequest.getPhoneNumber();
-        String referralCode = registerUserRequest.getReferralCode(); // Optional
-    
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(10));
+        System.out.println("Accessor:");
+        System.out.println(registerUserRequest);
+
+        // Generate a unique userId
+        String userId = UUID.randomUUID().toString();
+
         
-        Map<String, AttributeValue> attributesMap = new HashMap<>();
-        attributesMap.put("userId", new AttributeValue().withS(userId)); // String attribute
-        attributesMap.put("name", new AttributeValue().withS(name)); // String attribute
-        attributesMap.put("emailId", new AttributeValue().withS(emailId)); // String attribute
-        attributesMap.put("organisation", new AttributeValue().withS(organisation)); // String attribute
-        attributesMap.put("password", new AttributeValue().withS(hashedPassword)); // String attribute
-        attributesMap.put("state", new AttributeValue().withS(state)); // String attribute
-        attributesMap.put("phoneNumber", new AttributeValue().withS(phoneNumber)); // String attribute
-        attributesMap.put("referralCode", new AttributeValue().withS(referralCode)); // Optional String attribute
+
+        // Prepare the item to be put into the DynamoDB table
+        Map<String, AttributeValue> item = new HashMap<>();
+        item.put("userId", new AttributeValue(userId));
+        item.put("timestampCreated", new AttributeValue().withN(String.valueOf(registerUserRequest.getTimestampCreated().getTime())));
+        item.put("userType", new AttributeValue(registerUserRequest.getUserType()));
+        item.put("status", new AttributeValue().withBOOL(registerUserRequest.getStatus()));
+        item.put("name", new AttributeValue(registerUserRequest.getName()));
+        item.put("businessName", new AttributeValue(registerUserRequest.getBusinessName()));
+        item.put("phoneNumber", new AttributeValue(registerUserRequest.getPhoneNumber()));
+        item.put("emailAddress", new AttributeValue(registerUserRequest.getEmailId()));
+        item.put("address", new AttributeValue(registerUserRequest.getAddress()));
+        item.put("kycStatus", new AttributeValue().withBOOL(registerUserRequest.isKycStatus()));
+        item.put("GSTIN", new AttributeValue(registerUserRequest.getGSTIN()));
+
+        Map<String, AttributeValue> onboardingDocsForBuyerAttribute = new HashMap<>();
+        for (Map.Entry<String, String> entry : registerUserRequest.getOnboardingDocsForBuyer().entrySet()) {
+            onboardingDocsForBuyerAttribute.put(entry.getKey(), new AttributeValue(entry.getValue()));
+        }
     
-        PutItemRequest putItemRequest = new PutItemRequest(DYNAMODB_TABLE_NAME, attributesMap);
+        Map<String, AttributeValue> onboardingDocsForSellerAttribute = new HashMap<>();
+        for (Map.Entry<String, String> entry : registerUserRequest.getOnboardingDocsForSeller().entrySet()) {
+            onboardingDocsForSellerAttribute.put(entry.getKey(), new AttributeValue(entry.getValue()));
+        }
+
+        item.put("onboardingDocsForBuyer", new AttributeValue().withM(onboardingDocsForBuyerAttribute));
+        item.put("onboardingDocsForSeller", new AttributeValue().withM(onboardingDocsForSellerAttribute));
+        // Create a PutItemRequest
+        PutItemRequest putItemRequest = new PutItemRequest(DYNAMODB_TABLE_NAME, item);
+
+        // Put the item into the DynamoDB table
         amazonDynamoDB.putItem(putItemRequest);
-    
+
+        // Prepare and return the response object
         RegisterUserResponse response = new RegisterUserResponse();
         response.setMessage("User registered successfully! Please continue to login.");
         return response;
     }
-    
 }
+
+

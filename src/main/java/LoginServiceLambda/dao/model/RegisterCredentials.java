@@ -1,8 +1,13 @@
 package LoginServiceLambda.dao.model;
 
+import java.util.Date;
+import java.util.Map;
+
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,32 +17,45 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@DynamoDBTable(tableName = "UserCredentials") 
-
+@DynamoDBTable(tableName = "UserCredentials")
 public class RegisterCredentials {
 
-    @DynamoDBHashKey(attributeName = "userId")  
-    private String userId; // UUIDs 
+    @DynamoDBHashKey(attributeName = "userId")
+    private String userId;
 
-    @DynamoDBAttribute
+    @DynamoDBRangeKey(attributeName = "timestampCreated")
+    private Date timestampCreated;
+
+    @DynamoDBAttribute(attributeName = "userType")
+    private String userType;
+
+    @DynamoDBAttribute(attributeName = "status")
+    private boolean status;
+
+    @DynamoDBAttribute(attributeName = "name")
     private String name;
 
-    @DynamoDBAttribute
+    @DynamoDBAttribute(attributeName = "businessName")
+    private String businessName;
+
+    @DynamoDBIndexHashKey(attributeName = "phoneNumber", globalSecondaryIndexName = "PhoneNumberIndex")
+    private String phoneNumber;
+
+    @DynamoDBIndexHashKey(attributeName = "emailId", globalSecondaryIndexName = "EmailIdIndex")
     private String emailId;
 
-    @DynamoDBAttribute
-    private String organisation;
+    @DynamoDBAttribute(attributeName = "address")
+    private String address;
 
-    @DynamoDBAttribute
-    private String password; 
+    @DynamoDBAttribute(attributeName = "kycStatus")
+    private boolean kycStatus;
 
-    @DynamoDBAttribute
-    private String state;
+    @DynamoDBAttribute(attributeName = "GSTIN")
+    private String GSTIN;
 
-    @DynamoDBAttribute
-    private String referralCode; 
+    @DynamoDBAttribute(attributeName = "onboardingDocsForBuyer")
+    private Map<String, String> onboardingDocsForBuyer;
 
-    @DynamoDBAttribute
-    private String phoneNumber; 
-    
+    @DynamoDBAttribute(attributeName = "onboardingDocsForSeller")
+    private Map<String, String> onboardingDocsForSeller;
 }
